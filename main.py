@@ -1,9 +1,11 @@
 import os
 from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.service import Service
 from solveRecaptcha import solveRecaptcha
 from fake_useragent import UserAgent
 from selenium.webdriver.common.keys import Keys
@@ -14,9 +16,9 @@ import requests
 import json
 
 d = DesiredCapabilities.CHROME
-d['goog:loggingPrefs'] = { 'browser':'ALL' }
+d['goog:loggingPrefs'] = { 'driver':'ALL' }
 options = Options()
-ua = UserAgent()
+ua = UserAgent(verify_ssl=False)
 user_agent = ua.random
 print(user_agent)
 options.add_argument(f'user-agent={user_agent}')
@@ -33,11 +35,11 @@ delay_mins = configFile['delay_mins']
 email = configFile['user']['email']
 password = configFile['user']['password']
 
-browser = webdriver.Chrome(options=options, desired_capabilities=d)
-browser.get(login_page)
+driver = webdriver.Chrome(ChromeDriverManager().install())
+driver.get(login_page)
 
-emailForm = browser.find_element(By.ID, 'login_email-input')
-passwordForm = browser.find_element(By.ID, 'login_password-input')
+emailForm = driver.find_element(By.ID, 'login_email-input')
+passwordForm = driver.find_element(By.ID, 'login_password-input')
 
 emailForm.send_keys(email)
 passwordForm.send_keys(password)
@@ -47,14 +49,14 @@ passwordForm.send_keys(Keys.ENTER)
 
 time.sleep(7)
 
-if len(browser.find_elements(By.ID, 'daily-bonus__claim-btn')) > 0:
-    claimButton = browser.find_element(By.ID, 'daily-bonus__claim-btn')
+if len(driver.find_elements(By.ID, 'daily-bonus__claim-btn')) > 0:
+    claimButton = driver.find_element(By.ID, 'daily-bonus__claim-btn')
     claimButton.click()
     print('daily gift claimed')
 else:
     print('no daily gift found')
-if len(browser.find_elements(By.ID, 'offer__close')) > 0:
-    closeButton = browser.find_element(By.ID, 'offer__close')
+if len(driver.find_elements(By.ID, 'offer__close')) > 0:
+    closeButton = driver.find_element(By.ID, 'offer__close')
     closeButton.click()
     print('offer closed')
 else:
@@ -64,38 +66,38 @@ running = True
 
 while running:
   try:
-    if len(browser.find_elements(By.ID, 'daily-bonus__claim-btn')) > 0:
-        claimButton = browser.find_element(By.ID, 'daily-bonus__claim-btn')
+    if len(driver.find_elements(By.ID, 'daily-bonus__claim-btn')) > 0:
+        claimButton = driver.find_element(By.ID, 'daily-bonus__claim-btn')
         claimButton.click()
         print('daily gift claimed')
     else:
         print('no daily gift found')
-    if len(browser.find_elements(By.ID, 'offer__close')) > 0:
-        closeButton = browser.find_element(By.ID, 'offer__close')
+    if len(driver.find_elements(By.ID, 'offer__close')) > 0:
+        closeButton = driver.find_element(By.ID, 'offer__close')
         closeButton.click()
         print('offer closed')
     else:
         print('no offer found')
 
     time.sleep(2)
-    browser.execute_script(
+    driver.execute_script(
         "window.scrollTo(0, document.body.scrollHeight)"
     )
 
-    WebDriverWait(browser, 10).until(
+    WebDriverWait(driver, 10).until(
         EC.presence_of_element_located((By.ID, 'footer__postal-request-code'))
     )
 
-    postalCodeFooter = browser.find_element(By.ID, 'footer__postal-request-code')
+    postalCodeFooter = driver.find_element(By.ID, 'footer__postal-request-code')
     postalCodeFooter.click()
 
-    WebDriverWait(browser, 10).until(
+    WebDriverWait(driver, 10).until(
         EC.presence_of_element_located((By.ID, 'get-postal-request-code'))
     )
-    postalCodeButton = browser.find_element(By.ID, 'get-postal-request-code')
+    postalCodeButton = driver.find_element(By.ID, 'get-postal-request-code')
     postalCodeButton.click()
 
-    urlWithCaptcha = browser.current_url
+    urlWithCaptcha = driver.current_url
 
     result = solveRecaptcha(
         site_key,
@@ -104,7 +106,7 @@ while running:
 
     code = result['code']
 
-    WebDriverWait(browser, 10).until(
+    WebDriverWait(driver, 10).until(
         EC.presence_of_element_located((By.ID, 'g-recaptcha-response'))
     )
 
@@ -126,7 +128,7 @@ while running:
 
     time.sleep(1.5)
 
-    captchaClient = browser.execute_script('''
+    captchaClient = driver.execute_script('''
     function findRecaptchaClients() {
     // eslint-disable-next-line camelcase
     if (typeof (___grecaptcha_cfg) !== 'undefined') {
@@ -171,7 +173,7 @@ while running:
     ''')
     print("callback: " + captchaClient)
 
-    browser.execute_script(
+    driver.execute_script(
         captchaClient + "('" + token + "');"
     )
 
@@ -180,7 +182,7 @@ while running:
     file_name = "screenshot.png"
     current_path = os.getcwd()
     full_path = current_path + "\\" + file_name
-    divclassoutcome = browser.find_element(By.CLASS_NAME, 'outcome')
+    divclassoutcome = driver.find_element(By.CLASS_NAME, 'outcome')
     divunidchild = divclassoutcome.find_element(By.TAG_NAME, 'div')
     imagetoss = divunidchild.find_element(By.TAG_NAME, 'div')
     print(full_path)
@@ -198,7 +200,7 @@ while running:
     webhook.add_embed(embed)
     response = webhook.execute()
 
-    backButton = browser.find_element(By.ID, 'return')
+    backButton = driver.find_element(By.ID, 'return')
     backButton.click()
 
     #time.sleep(60 * delay_mins)
