@@ -1,0 +1,16 @@
+{
+    "webhook_url": "https://discord.com/api/webhooks/1025780132398510110/w0RJdSn-Ra-vaTl2XF8_uj6pSFpJ8kaOF7azoxccPoWEcnv0I8JoKj3kXJMhmTTuR1uu",
+
+    "api_key": "39c2e964d77f29ae843ed732da6f3652",
+    "site_key": "6LfvyQ0iAAAAAGBPXO2PBIW1JLftMPb47T8IxORq",
+
+    "login_page": "https://login.chumbacasino.com/",
+    "lobby_page": "https://lobby.chumbacasino.com/",
+
+    "delay_mins": 30,
+
+    "user": {
+        "email": "rich@thetradehub.net",
+        "password": "Python#1234"
+    }
+}
