@@ -66,6 +66,9 @@ running = True
 
 while running:
   try:
+    driver.get(lobby_page)
+    time.sleep(10)
+
     if len(driver.find_elements(By.ID, 'daily-bonus__claim-btn')) > 0:
         claimButton = driver.find_element(By.ID, 'daily-bonus__claim-btn')
         claimButton.click()
