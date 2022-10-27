@@ -206,7 +206,7 @@ while running:
     backButton = driver.find_element(By.ID, 'return')
     backButton.click()
 
-    #time.sleep(60 * delay_mins)
+    time.sleep(60 * delay_mins)
   except Exception as e:
     print("Continuing")
     print(str(e))

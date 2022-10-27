@@ -1,8 +1,13 @@
 import os
 from twocaptcha import TwoCaptcha
 
+with open("config.json", "r") as f:
+    configFile = json.load(f)
+
+api_key = configFile['api_key']
+
 def solveRecaptcha(sitekey, url):
-    api_key = os.getenv('APIKEY_2CAPTCHA', '39c2e964d77f29ae843ed732da6f3652')
+    api_key = os.getenv('APIKEY_2CAPTCHA', api_key)
     solver = TwoCaptcha(api_key)
 
     try:
