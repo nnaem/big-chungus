@@ -66,8 +66,19 @@ running = True
 
 while running:
   try:
-    driver.get(lobby_page)
-    time.sleep(10)
+    driver.get(login_page)
+    time.sleep(5)
+
+    if len(driver.find_elements(By.ID, 'login_email-input')) > 0:
+        emailForm = driver.find_element(By.ID, 'login_email-input')
+        emailForm.send_keys(email)
+    if len(driver.find_elements(By.ID, 'login_password-input')) > 0:
+        passwordForm = driver.find_element(By.ID, 'login_password-input')
+        passwordForm.send_keys(password)
+        time.sleep(1)
+        passwordForm.send_keys(Keys.ENTER)
+
+    time.sleep(7)
 
     if len(driver.find_elements(By.ID, 'daily-bonus__claim-btn')) > 0:
         claimButton = driver.find_element(By.ID, 'daily-bonus__claim-btn')
