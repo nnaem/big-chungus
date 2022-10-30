@@ -66,7 +66,6 @@ running = True
 
 while running:
   try:
-    driver.get(login_page)
     time.sleep(5)
 
     if len(driver.find_elements(By.ID, 'login_email-input')) > 0:
